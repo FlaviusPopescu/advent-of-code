@@ -1,15 +1,23 @@
-# advent-of-code
+# Advent Of Code
 
-Welcome to the Advent of Code[^aoc] Kotlin project created by [flaviuspopescu][github] using the [Advent of Code Kotlin Template][template] delivered by JetBrains.
+Welcome! I started an Advent of Code[^aoc] Kotlin project after [this video][sebi-video]
+came up in my feed. In the video, [Sebastian][sebi-url] from JetBrains walks us through 
+what the AOC challenges are like, and it seemed like a great chance to join in the fun 
+and try this out in Kotlin. Getting started is even easier with their
+[aoc-kotlin-template][template]. Thanks, Sebastian and team, for the timely reminder
+that AOC 2021 is on!
 
-In this repository, flaviuspopescu is about to provide solutions for the puzzles using [Kotlin][kotlin] language.
+It's looking like the Day 01 solution is already going to take advantage of some handy
+kotlinlang standard library functions for collections, destructuring declarations, and more.
+I'll hopefully get a chance to add as many solutions to the `aoc-2021` project module, but I
+will likely keep some helper modules around (e.g. `input-processing`).
 
-If you're stuck with Kotlin-specific questions or anything related to this template, check out the following resources:
+And as Sebastian recommended in the video, the goal here is to have fun, keep it low-key, and 
+get some good conversations going. Hope you have a great winter!
 
+### Some more resources
 - [Kotlin docs][docs]
 - [Kotlin Slack][slack]
-- Template [issue tracker][issues]
-
 
 [^aoc]:
     [Advent of Code][aoc] – An annual event of Christmas-oriented programming challenges started December 2015.
@@ -18,8 +26,7 @@ If you're stuck with Kotlin-specific questions or anything related to this templ
 
 [aoc]: https://adventofcode.com
 [docs]: https://kotlinlang.org/docs/home.html
-[github]: https://github.com/flaviuspopescu
-[issues]: https://github.com/kotlin-hands-on/advent-of-code-kotlin-template/issues
-[kotlin]: https://kotlinlang.org
 [slack]: https://surveys.jetbrains.com/s3/kotlin-slack-sign-up
 [template]: https://github.com/kotlin-hands-on/advent-of-code-kotlin-template
+[sebi-video]: https://www.youtube.com/watch?v=6-XSehwRgSY&t=26s
+[sebi-url]: https://twitter.com/sebi_io
