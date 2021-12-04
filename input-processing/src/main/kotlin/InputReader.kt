@@ -20,3 +20,10 @@ fun <InputType> Any.inputFromFile(parseInput: (String) -> InputType?): List<Inpu
         .readLines()
         .mapNotNull { parseInput(it) }
 }
+
+fun <InputType> Any.inputFromFileIndexed(parseInput: (Int, String) -> InputType?): List<InputType> {
+    return this::class.run { java.getResourceAsStream("$simpleName.in") }
+        .reader()
+        .readLines()
+        .mapIndexedNotNull { i, line -> parseInput(i, line) }
+}
