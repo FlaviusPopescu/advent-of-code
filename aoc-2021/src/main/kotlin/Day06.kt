@@ -1,6 +1,5 @@
 import Day06.solvePart1
 import Day06.solvePart2
-import kotlin.system.measureTimeMillis
 
 /**
  * https://adventofcode.com/2021/day/6
@@ -25,12 +24,6 @@ object Day06 {
             getLanternFishTimers().countAll(endDay).also {
                 println("--> Day $endDay result: $it")
             }
-        }
-    }
-
-    private inline fun printRunningTime(stage: String, block: () -> Unit) {
-        measureTimeMillis(block).also { millis ->
-            println("[${millis / 1_000f}sec] $stage")
         }
     }
 
