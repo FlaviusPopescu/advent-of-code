@@ -1,5 +1,6 @@
 import Day21.solve1
-import Day21.solve2
+import Day21.solve2Recursive
+import Day21.solve2RecursiveCompact
 
 const val WIN_SCORE_PART_1 = 1_000
 const val WIN_SCORE_PART_2 = 21
@@ -28,39 +29,88 @@ object Day21 {
         }
     }
 
-    fun solve2() {
-        val (playerOneStart, playerTwoStart) = input.let { (pos1, pos2) ->
-            Player("1", pos1, 0) to Player("2", pos2, 0)
-        }
-        fun getWins(
-            turn: Int,
-            players: List<Player>,
-            multipliers: List<ULong>
-        ): List<ULong> {
-            val results = mutableListOf(0uL, 0uL)
-            for (roll in 3..9) {
-                val ways = sumCounts[roll]!!.toULong()
+    fun solve2Recursive(winScore: Int = WIN_SCORE_PART_2) {
+        val (p1, p2) = input
+        data class State(
+            val positions: List<Int>,
+            val scores: List<Int>
+        )
 
-                val updated = players.map { it.copy() }
-                updated[turn].add(roll)
-
-                if (updated[turn].score >= WIN_SCORE_PART_2) {
-                    results[turn] += ways * multipliers[turn]
-                } else {
-                    val ms = mutableListOf(0uL, 0uL)
-                    ms[turn] = multipliers[turn] * ways
-                    ms[1 - turn] = multipliers[1 - turn] * ways
-                    getWins(1 - turn, updated, ms).let { (p1, p2) ->
-                        results[0] += p1
-                        results[1] += p2
+        val cache = HashMap<State, LongArray>()
+        var (hits, misses) = 0 to 0
+        fun totalWins(state: State): LongArray =
+            state.run {
+                cache[this]?.let { return it.also { hits++ } }
+                val result = LongArray(positions.size)
+                for (roll1 in 1..3) for (roll2 in 1..3) for (roll3 in 1..3) {
+                    val roll = roll1 + roll2 + roll3
+                    val pos = (positions.first() - 1 + roll) % 10 + 1
+                    val score = scores.first() + pos
+                    if (score >= winScore) {
+                        result[0]++
+                    } else {
+                        totalWins(
+                            State(
+                                positions = positions.drop(1) + listOf(pos),
+                                scores = scores.drop(1) + listOf(score)
+                            )
+                        ).let { shiftedResults ->
+                            result[0] += shiftedResults.last()
+                            for (i in 1 until result.size) {
+                                result[i] += shiftedResults[i - 1]
+                            }
+                        }
                     }
                 }
+                result.also {
+                    cache[state] = it
+                    misses++
+                }
             }
-            return results
+        totalWins(State(listOf(p1, p2), listOf(0, 0))).also {
+            println("Scores: ${it.toList()}")
+            println("Winner: ${it.maxOrNull()}")
         }
-        getWins(0, listOf(playerOneStart, playerTwoStart), listOf(1uL, 1uL)).also { (p1, p2) ->
-            println("Part 2 Scores: $p1, $p2")
-            println("Part 2 Winning Score: ${maxOf(p1, p2)}")
+        println("Hits/Misses: $hits/$misses")
+    }
+
+    fun solve2RecursiveCompact(winScore: Int = WIN_SCORE_PART_2) {
+        val (p1, p2) = input
+        data class State(
+            val positions: List<Int>,
+            val scores: List<Int>,
+            val multiplier: Long
+        )
+
+        fun totalWins(state: State): LongArray =
+            state.run {
+                val result = LongArray(positions.size)
+                for (roll in 3..9) {
+                    val ways = sumCounts[roll]!!.toLong()
+                    val pos = (positions.first() - 1 + roll) % 10 + 1
+                    val score = scores.first() + pos
+                    if (score >= winScore) {
+                        result[0] = result[0] + multiplier * ways
+                    } else {
+                        totalWins(
+                            State(
+                                positions = positions.drop(1) + listOf(pos),
+                                scores = scores.drop(1) + listOf(score),
+                                multiplier = multiplier * ways
+                            )
+                        ).let { shiftedResults ->
+                            result[0] += shiftedResults.last()
+                            for (i in 1 until result.size) {
+                                result[i] += shiftedResults[i - 1]
+                            }
+                        }
+                    }
+                }
+                result
+            }
+        totalWins(State(listOf(p1, p2), listOf(0, 0), 1L)).also {
+            println("Scores: ${it.toList()}")
+            println("Winner: ${it.maxOrNull()}")
         }
     }
 
@@ -117,6 +167,9 @@ data class Player(
 }
 
 fun main() {
-    solve1()
-    solve2()
+    printRunningTime("Part 1") { solve1() }
+    printRunningTime("Part 2 - Recursive (individual rolls)") { solve2Recursive() }
+    printRunningTime("Part 2 - Recursive (cumulated rolls, no caching)") {
+        solve2RecursiveCompact()
+    }
 }
